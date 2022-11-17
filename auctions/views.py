@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import User, Listing, Bids, Comments
 
 
 def index(request):
@@ -67,8 +67,8 @@ def register(request):
 def create_listing(request):
     if request.method == "GET":
         return render(request, "auctions/new_listing.html")
-    #elif request.method == "POST":
     else:
+        # Save new listing in database
         title = request.POST["title"]
         description = request.POST["description"]
         price = request.POST["price"]
@@ -78,3 +78,28 @@ def create_listing(request):
         new_list.save()
 
         return render(request, "auctions/new_listing.html")
+
+
+def auction(request, title):
+    auction = Listing.objects.get(title=title)
+    if request.method == "GET":
+        return render(request, "auctions/display_auction.html", {
+            "title": auction.title,
+            "description": auction.description,
+            "price": auction.price,
+            "image": auction.image,
+            "biedingen" : Bids.objects.all(),
+            "comment": Comments.objects.all()
+        })
+    else:
+        # save het nieuwe bod
+        new_bod = request.POST["new_bod"]
+        bod = Bids(listing = auction, new_bid = new_bod)
+        bod.save()
+        # save de nieuwe comment
+        new_comment =  request.POST["comment"]
+        comment = Comments(listing = auction, new_comment=new_comment)
+        comment.save()
+        return render(request, "auctions/index.html", {
+            "auctions" : Listing.objects.all()
+        })

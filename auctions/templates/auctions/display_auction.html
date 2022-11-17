@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    <h2> {{ title }} </h2>
+    <h2> {{ description }}</h2>
+    <h2> {{ price }}</h2>
+    {% if image %}
+    <img src="{% static 'auctions/images/' %}{{ image }}" alt="{{ image }}"/>
+    {% endif %}
+    Biedingen:
+    <br>
+    {% for item in biedingen %}
+        {{ item }}
+        <br>
+    {% empty %}
+        Er zijn nog geen biedingen.
+    {% endfor %}
+    {% for item in comments %}
+        {{ item }}
+        <br>
+    {% empty %}
+        Er zijn nog geen comments.
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'auction' title %}" method="post">
+        {% csrf_token %}
+        <label>Nieuw bod:</label>
+        <input type="integer" name="new_bod" placeholder="bid">
+        <input type="submit" value="bod">
+        <br>
+        <label>Nieuw comment</label>
+        <br>
+        <textarea name="comment" rows="4" cols="50" placeholder="comment"></textarea>
+        <input type="submit" value="submit">
+    {% endif %}
+
+
+{% endblock %}

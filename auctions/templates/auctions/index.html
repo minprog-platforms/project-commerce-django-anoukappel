@@ -1,16 +1,27 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>Active Listings:</h2>
 
-    <ul>
+    <div class="grid">
         {% for item in auctions %}
-            <li>auction {{ item.title }} </li>
-            <li>Description: {{ item.description }}
-            <li>Price {{ item.price }}</li>
-            <li>Photo {{ item.image }} </li>
+        <div class="flex-child">
+            <h5>Auction {{ item.id }}</h5>
+             <a href="{% url 'auction' item.title %}" href="#">{{ item.title }}</a>
+            <h5>Description </h5>
+             {{ item.description }}
+            <h5>Price </h5>
+             {{ item.price }}
+            {% if item.image %}
+                <h5>Photo </h5>
+                 {{item.image}}
+                <img src="{{item.image}}" alt="">
+            {% endif %}
+            <br>
+            <br>
+        </div>
         {% empty %}
             <li> No active auctions. </li>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
